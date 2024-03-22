@@ -3,6 +3,7 @@ import ssl
 import secrets
 from email.mime.text import MIMEText
 import re
+import pyotp
 
 # Function to send OTP email
 def send_otp_email(receiver_email, otp):
@@ -22,8 +23,9 @@ def send_otp_email(receiver_email, otp):
         server.sendmail(sender_email, receiver_email, msg.as_string())
 
 # Function to generate OTP
-def generate_otp():
-    return str(secrets.randbelow(1000000)).zfill(6)
+def generate_otp(key):
+    totp = pyotp.TOTP(key)
+    return totp.now()
 
 # Function to verify OTP
 def verify_otp(input_otp, generated_otp):

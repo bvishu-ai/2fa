@@ -12,8 +12,42 @@ user_mapping = {
     # Add more users as needed
 }
 
+# Simulated user database
+users = {
+    "samyukta": {
+        "password": "password123",
+        "secret_key": "JBSWY3DPEHPK3PXP"
+    },
+    "vishal": {
+        "password": "securepass",
+        "secret_key": "MFRGGZDFMZTWQ2LK"
+    }
+    # Add more users as needed
+}
+
+# Function to authenticate user based on Username and Password
+def authenticate_user_password():
+    username = input("Enter your Username: ")
+    password = input("Enter your Password: ")
+    
+    # Check if the username exists in the user database
+    if username in users:
+        stored_password = users[username]["password"]
+        secret_key = users[username]["secret_key"]
+
+        # Verify the entered password against the stored password
+        if password == stored_password:
+            # Authenticate user using otp
+            if not authenticate_user_otp(secret_key):
+                exit()
+            return True
+        else:
+            print("Invalid password Entered")
+    else:
+        print("Invalid username Entered")
+
 # Function to authenticate user based on OTP
-def authenticate_user_otp():
+def authenticate_user_otp(key):
     attempts = 3
     while attempts > 0:
         receiver_email = input("Enter your email address: ")
@@ -21,7 +55,7 @@ def authenticate_user_otp():
             print("Invalid email format. Please enter a valid email address.")
             continue
         
-        generated_otp = generate_otp()
+        generated_otp = generate_otp(key)
         send_otp_email(receiver_email, generated_otp)
         for attempt in range(attempts):
             input_otp = input(f"Enter the OTP received (Attempts left: {attempts - attempt}): ")
@@ -67,9 +101,9 @@ def main():
         exit()
 
     elif mode == "decrypt":
-        
-        # Authenticate user using otp
-        if not authenticate_user_otp():
+
+        # Authenticate User Password of User
+        if not authenticate_user_password():
             exit()
 
         # Authenticate user using face detection
